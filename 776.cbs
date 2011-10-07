@@ -1,0 +1,90 @@
+Declare Sub FillCaseClock
+Const CLOCK_LABEL_PREFIX = "The clock is"
+Const CLOCK_REFRESH_RATE = 30000  ' milliseconds
+Const DEFAULT_CLOCK_STATUS = "This Case does Not yet have a Case clock"
+
+
+Sub Form_Load()
+	Me.DoDefault
+
+	SetupCaseClockColorScheme
+	App.SetColorScheme "CaseClock"
+	Call FillCaseClock
+	TIMER.Interval = CLOCK_REFRESH_RATE
+End Sub
+
+
+Sub SetupCaseClockColorScheme()
+	Dim LabelList As New List
+	Dim ColorList As New List
+	LabelList.AppendItem "Running", "Paused", "Updating"
+	ColorList.AppendItem "DarkGreen", "Red", "OrangeRed"
+	On Error Resume Next
+	App.CreateColorScheme "CaseClock", LabelList,ColorList
+End Sub
+
+
+Sub timer_Timer() 
+	Call FillCaseClock
+End Sub 
+
+Sub btn_refresh_clock_click() 
+	Call FillCaseClock
+End Sub 
+
+
+Sub FillCaseClock()
+	Dim recCase As Record
+	Dim recCaseClock As Record
+	Dim caseObjid As Long
+	Dim br As New BulkRetrieve
+	Dim clockList As List
+	Dim elapsedTime As String
+	Dim clockStatus As String
+
+	Set recCase = Cobj_CASE_OBJ.Contents
+	caseObjid = recCase.GetField("objid")
+
+	clockStatus = DEFAULT_CLOCK_STATUS
+
+  	br.SimpleQuery 0, "case_clock_view"
+  	br.AppendFilter 0, "case_objid", cbEqual, caseObjid
+	br.RetrieveRecords
+	Set clockList = br.GetRecordList(0)
+	If clockList.Count > 0 Then
+		Set recCaseClock = clockList.ItemByIndex(0)
+		elapsedTime = recCaseClock.GetField("elapsed_time_display")
+		clockStatus = CLOCK_LABEL_PREFIX & Space$(1) & recCaseClock.GetField("status")
+
+		If recCaseClock.GetField("is_running") = 1 Then
+			lbl_clock_is.ForeColor = "Running"
+		Else
+			lbl_clock_is.ForeColor = "Paused"
+		End If
+
+	End If
+	
+	lbl_clock_elapsed_time_display.Caption = elapsedTime
+	lbl_clock_is.Caption = clockStatus
+
+End Sub
+
+Public Sub Message(ByVal num As Long, ByVal info As String)
+'MsgBox "case form reveived message " & cstr(num) & " with info of: " & info
+  
+  Dim caseRecord As Record
+  Set caseRecord = cobj_CASE_OBJ.Contents
+
+  Select Case num
+  	Case 517 'change status and reopen throw this message
+		Me.DoDefault
+		lbl_clock_is.ForeColor = "Updating"	
+		lbl_clock_is.Caption = "Hold tight. The clock is being updated..."		
+	
+	Case cbCloseMessage
+      Me.Close cbCloseChildren
+    Case Else
+      Me.DoDefault
+  End Select
+End Sub
+

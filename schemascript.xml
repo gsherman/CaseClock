@@ -1,0 +1,54 @@
+<schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
+
+<addTable id="4901" name="case_clock"/>
+
+<addColumn name="objid" dataType="Integer" table="case_clock" >
+    <description>Internal record number</description>
+    <clarifyGenericFieldID>3</clarifyGenericFieldID>
+</addColumn>
+<addColumn name="is_running" dataType="Integer" table="case_clock" />
+<addColumn name="status" dataType="String" table="case_clock" >
+    <length>255</length>
+</addColumn>
+    <addColumn name="last_calculated_time" dataType="DateTime" table="case_clock" />
+    <addColumn name="last_started_at" dataType="DateTime" table="case_clock" />
+    <addColumn name="time_so_far" dataType="Integer" table="case_clock" />
+
+    <addRelation type="OneToOne" table="case" inverseTable="case_clock" name="case2case_clock" inverseRelationName="case_clock2case"/>        
+
+    <addSqlView id="4902" name="case_clock_view">
+        <baseTable>case_clock</baseTable>
+        <sql>
+            select
+            objid as case_clock_objid,
+            status,
+            case_clock2case as case_objid,
+            is_running,
+            last_calculated_time,
+            last_started_at,
+            elapsed_time_display,
+            elapsed_time_in_seconds,
+            elapsed_time_in_minutes
+            from table_case_clock c
+            cross apply (select * from dbo.GetCaseClock(c.case_clock2case)) clock
+        </sql>
+    </addSqlView>
+
+    <addSqlViewColumn name="case_clock_objid" dataType="Integer" sqlView="case_clock_view"><clarifyGenericFieldID>3</clarifyGenericFieldID></addSqlViewColumn>
+    <addSqlViewColumn name="status" dataType="String" sqlView="case_clock_view"><length>255</length></addSqlViewColumn>
+    <addSqlViewColumn name="case_objid" dataType="Integer" sqlView="case_clock_view"/>
+    <addSqlViewColumn name="is_running" dataType="Integer" sqlView="case_clock_view"/>
+    <addSqlViewColumn name="last_calculated_time" dataType="DateTime" sqlView="case_clock_view"/>
+    <addSqlViewColumn name="last_started_at" dataType="DateTime" sqlView="case_clock_view"/>
+    <addSqlViewColumn name="elapsed_time_display" dataType="String" sqlView="case_clock_view">
+    	<length>255</length>
+      <description>elapsed time in display format of days, hours, minutes (1d 2h 27m) </description>
+    </addSqlViewColumn>    
+    <addSqlViewColumn name="elapsed_time_in_seconds" dataType="Integer" sqlView="case_clock_view">
+        <description>elapsed time in seconds</description>
+    </addSqlViewColumn>
+    <addSqlViewColumn name="elapsed_time_in_minutes" dataType="Integer" sqlView="case_clock_view">
+        <description>elapsed time in minutes</description>
+    </addSqlViewColumn>
+ 
+</schemaScript>

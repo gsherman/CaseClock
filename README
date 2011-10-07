@@ -1,0 +1,4 @@
+CaseClock functionality
+
+Also requires the UpdateCaseClock.ps1 and UpdateCaseClock.bat scripts from my powershell repo on Github:
+https://github.com/gsherman/powershell
