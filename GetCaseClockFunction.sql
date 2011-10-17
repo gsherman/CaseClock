@@ -9,7 +9,7 @@ IF OBJECT_ID (N'dbo.GetCaseClock', N'TF') IS NOT NULL
 DROP FUNCTION dbo.GetCaseClock;
 GO
 
-ALTER FUNCTION [dbo].[GetCaseClock](@case_objid int)
+CREATE FUNCTION [dbo].[GetCaseClock](@case_objid int)
     RETURNS  @caseclocktable TABLE
      (
    	elapsed_time_in_seconds int, 

@@ -2,3 +2,11 @@ CaseClock functionality
 
 Also requires the UpdateCaseClock.ps1 and UpdateCaseClock.bat scripts from my powershell repo on Github:
 https://github.com/gsherman/powershell
+
+apply the case.clock.schemascript
+apply the GetCaseClockFunction
+apply the case.clock.view.schemascript
+
+Note: for the GetCaseClockFunction, SQL Server must be at Compatibility level 90 (SQL Server 2005) or higher
+from sql server management studio, right click your database, choose Properties, then click on Options to see the compat level.
+

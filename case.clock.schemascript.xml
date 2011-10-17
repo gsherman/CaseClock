@@ -1,0 +1,18 @@
+<schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
+
+<addTable id="4901" name="case_clock"/>
+
+<addColumn name="objid" dataType="Integer" table="case_clock" >
+    <description>Internal record number</description>
+    <clarifyGenericFieldID>3</clarifyGenericFieldID>
+</addColumn>
+<addColumn name="is_running" dataType="Integer" table="case_clock" />
+<addColumn name="status" dataType="String" table="case_clock" >
+    <length>255</length>
+</addColumn>
+    <addColumn name="last_calculated_time" dataType="DateTime" table="case_clock" />
+    <addColumn name="last_started_at" dataType="DateTime" table="case_clock" />
+    <addColumn name="time_so_far" dataType="Integer" table="case_clock" />
+
+    <addRelation type="OneToOne" table="case" inverseTable="case_clock" name="case2case_clock" inverseRelationName="case_clock2case"/>        
+</schemaScript>
